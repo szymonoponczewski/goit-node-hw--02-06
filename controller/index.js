@@ -62,14 +62,14 @@ const remove = async (req, res, next) => {
 };
 
 const create = async (req, res, next) => {
-  const { name, email, phone } = req.body;
+  const body = req.body;
   try {
-    const validationResult = addSchema.validate({ name, email, phone });
+    const validationResult = addSchema.validate(body);
 
     if (validationResult.error) {
       res.status(400).send({ message: "All fields must be completed!" });
     } else {
-      const newContact = await service.createContact({ name, email, phone });
+      const newContact = await service.createContact(body);
       res
         .status(201)
         .json({ message: "Contact added", data: { contact: newContact } });
