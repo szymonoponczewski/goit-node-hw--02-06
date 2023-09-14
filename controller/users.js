@@ -1,7 +1,9 @@
 const Joi = require("joi");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const passport = require("passport");
 const { createUser, findUserByEmail } = require("../service");
+const User = require("../service/schemas/users");
 
 const signupSchema = Joi.object({
   email: Joi.string().email().required(),
@@ -84,7 +86,42 @@ const login = async (req, res, next) => {
   }
 };
 
+const auth = async (req, res, next) => {
+  try {
+    passport.authenticate("jwt", { session: false }, (err, user) => {
+      if (!user || err) {
+        return res.status(401).json({ message: "Not authorized" });
+      }
+
+      req.user = user;
+      next();
+    })(req, res, next);
+  } catch (error) {
+    console.error("Authorization error:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const logout = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authorized" });
+    }
+
+    await User.findByIdAndUpdate(userId, { token: null });
+
+    return res.status(204).send();
+  } catch (error) {
+    console.error("Logout error:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
 module.exports = {
   signup,
   login,
+  auth,
+  logout,
 };
