@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const bCrypt = require("bcryptjs");
 
-// ? check below line
 const Schema = mongoose.Schema;
 
 const user = new Schema({
@@ -25,14 +24,14 @@ const user = new Schema({
   },
 });
 
-userSchema.methods.setPassword = function (password) {
+user.methods.setPassword = function (password) {
   this.password = bCrypt.hashSync(password, bCrypt.genSaltSync(6));
 };
 
-userSchema.methods.validPassword = function (password) {
+user.methods.validPassword = function (password) {
   return bCrypt.compareSync(password, this.password);
 };
 
-const User = mongoose.model("user", userSchema);
+const User = mongoose.model("user", user);
 
 module.exports = User;
