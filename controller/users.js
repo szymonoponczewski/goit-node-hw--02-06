@@ -15,6 +15,22 @@ const loginSchema = Joi.object({
   password: Joi.string().required(),
 });
 
+const auth = async (req, res, next) => {
+  try {
+    passport.authenticate("jwt", { session: false }, (err, user) => {
+      if (!user || err) {
+        return res.status(401).json({ message: "Not authorized" });
+      }
+
+      req.user = user;
+      next();
+    })(req, res, next);
+  } catch (error) {
+    console.error("Authorization error:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 const signup = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -28,7 +44,8 @@ const signup = async (req, res) => {
     if (existingUser) {
       return res.status(409).json({ message: "Email in use" });
     }
-    const hashedPassword = bcrypt.hashSync(password, 10);
+    const salt = bcrypt.genSalt();
+    const hashedPassword = bcrypt.hash(password, salt);
     const newUser = await createUser({
       email,
       password: hashedPassword,
@@ -49,7 +66,8 @@ const signup = async (req, res) => {
 
 const login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { body } = req;
+    const { email, password } = body;
     const { error } = loginSchema.validate({ email, password });
 
     if (error) {
@@ -57,12 +75,15 @@ const login = async (req, res, next) => {
     }
     const user = await findUserByEmail(email);
     if (!user) {
-      return res.status(401).json({ message: "Email or password is wrong" });
+      return res.status(401).json({ message: "Wrong email" });
     }
-
-    const authMatch = bcrypt.compareSync(password, user.password);
+    console.log("password:", password);
+    console.log("body", body);
+    console.log("user.password przed compare", user.password);
+    const authMatch = bcrypt.compare(password, user.password);
+    console.log("user.password po compare", user.password);
     if (!authMatch) {
-      return res.status(401).json({ message: "Email or password is wrong" });
+      return res.status(401).json({ message: "Wrong password" });
     }
 
     const secret = process.env.SECRET;
@@ -82,22 +103,6 @@ const login = async (req, res, next) => {
     });
   } catch (error) {
     console.error("Login error:", error);
-    return res.status(500).json({ message: "Internal server error" });
-  }
-};
-
-const auth = async (req, res, next) => {
-  try {
-    passport.authenticate("jwt", { session: false }, (err, user) => {
-      if (!user || err) {
-        return res.status(401).json({ message: "Not authorized" });
-      }
-
-      req.user = user;
-      next();
-    })(req, res, next);
-  } catch (error) {
-    console.error("Authorization error:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
