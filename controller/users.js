@@ -123,18 +123,16 @@ const logout = async (req, res) => {
 };
 
 const current = (req, res, next) => {
-  const { user } = req;
-  const { token } = user;
+  passport.authenticate("jwt", { session: false }, (err, user) => {
+    if (err || !user) {
+      return res.status(401).json({ message: "Not authorized" });
+    }
 
-  if (!token) return res.status(401).json({ message: "Not authorized" });
-
-  const decode = jwt.decode(token);
-  const { email, subscription } = decode;
-
-  return res.status(200).json({
-    email,
-    subscription,
-  });
+    return res.status(200).json({
+      email: user.email,
+      subscription: user.subscription,
+    });
+  })(req, res, next);
 };
 
 module.exports = {
