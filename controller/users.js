@@ -77,11 +77,8 @@ const login = async (req, res, next) => {
     if (!user) {
       return res.status(401).json({ message: "Wrong email" });
     }
-    console.log("password:", password);
-    console.log("body", body);
-    console.log("user.password przed compare", user.password);
+
     const authMatch = bcrypt.compare(password, user.password);
-    console.log("user.password po compare", user.password);
     if (!authMatch) {
       return res.status(401).json({ message: "Wrong password" });
     }
