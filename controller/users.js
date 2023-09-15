@@ -118,10 +118,25 @@ const logout = async (req, res) => {
   }
 };
 
+const current = (req, res, next) => {
+  const { user } = req;
+  const { token } = user;
+
+  if (!token) return res.status(401).json({ message: "Not authorized" });
+
+  const decode = jwt.decode(token);
+  const { email, subscription } = decode;
+
+  return res.status(200).json({
+    email,
+    subscription,
+  });
+};
 
 module.exports = {
   signup,
   login,
   auth,
   logout,
+  current,
 };

@@ -1,7 +1,7 @@
 const app = require("./app");
 const mongoose = require("mongoose");
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 const uriDb = process.env.DB_HOST;
 const connection = mongoose.connect(uriDb, { dbName: "db-contacts" });
 

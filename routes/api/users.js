@@ -10,6 +10,5 @@ router.get("/logout", ctrlContact.auth, ctrlContact.logout);
 
 router.get("/current", ctrlContact.auth, ctrlContact.current);
 
-router.patch("/subscription", ctrlContact.auth, ctrlContact.subscription);
 
 module.exports = router;
