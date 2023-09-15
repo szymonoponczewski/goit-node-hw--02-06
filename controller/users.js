@@ -44,8 +44,10 @@ const signup = async (req, res) => {
     if (existingUser) {
       return res.status(409).json({ message: "Email in use" });
     }
-    const salt = bcrypt.genSalt();
-    const hashedPassword = bcrypt.hash(password, salt);
+
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password, salt);
+
     const newUser = await createUser({
       email,
       password: hashedPassword,
