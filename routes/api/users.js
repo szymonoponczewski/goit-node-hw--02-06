@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const ctrlContact = require("../../controller/users");
+const ctrlUser = require("../../controller/users");
 
-router.post("/signup", ctrlContact.signup);
+router.post("/signup", ctrlUser.signup);
 
-router.post("/login", ctrlContact.login);
+router.post("/login", ctrlUser.login);
 
-router.post("/logout", ctrlContact.auth, ctrlContact.logout);
+router.post("/logout", ctrlUser.auth, ctrlUser.logout);
 
-router.get("/current", ctrlContact.auth, ctrlContact.current);
+router.get("/current", ctrlUser.auth, ctrlUser.current);
 
 module.exports = router;
