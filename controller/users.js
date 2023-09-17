@@ -174,6 +174,7 @@ const avatars = async (req, res, next) => {
     const avatarPic = await Jimp.read(fileName);
     avatarPic.resize(250, 250).write(nicknameAvatarPath);
     user.avatarURL = nicknameAvatarPath;
+    
   } catch (error) {
     await fs.unlink(temporaryName);
     return res.status(401).json({ message: "Not authorized" });
