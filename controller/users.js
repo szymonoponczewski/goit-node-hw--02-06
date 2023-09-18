@@ -161,7 +161,7 @@ const upload = multer({ storage: storage });
 
 const avatars = async (req, res, next) => {
   const { path: temporaryName, originalname } = req.file;
-  const fileName = path.join(storeImage, originalname);
+  const fileName = path.join(uploadDir, originalname);
   const { user } = req;
   const { email, token } = user;
   const nickname = email.split("@")[0];
