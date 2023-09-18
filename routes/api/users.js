@@ -14,7 +14,7 @@ router.patch(
   "/avatars",
   ctrlUser.auth,
   ctrlUser.avatars,
-  ctrlUser.upload.single("picture")
+  ctrlUser.upload.single("avatar")
 );
 
 module.exports = router;
