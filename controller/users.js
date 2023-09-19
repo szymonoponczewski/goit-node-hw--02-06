@@ -167,7 +167,7 @@ const avatars = async (req, res, next) => {
   const nicknameAvatarPath = `${storeImage}/${nickname}.jpg`;
 
   try {
-    console.log("Token:", token);
+    console.log("Token:", token); //! returns null
     if (!token)
       return res.status(401).json({ message: "Token - Not authorized" });
 
