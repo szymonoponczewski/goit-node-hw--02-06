@@ -29,7 +29,6 @@ const auth = async (req, res, next) => {
       if (!user || err) {
         return res.status(401).json({ message: "Not authorized" });
       }
-
       req.user = user;
       next();
     })(req, res, next);
