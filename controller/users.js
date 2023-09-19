@@ -168,7 +168,8 @@ const avatars = async (req, res, next) => {
   const nicknameAvatarPath = `${storeImage}/${nickname}.jpg`;
 
   try {
-    if (!token) return res.status(401).json({ message: "Not authorized" });
+    if (!token)
+      return res.status(401).json({ message: "Token - Not authorized" });
 
     await fs.rename(temporaryName, fileName);
     const avatarPic = await Jimp.read(fileName);
@@ -181,7 +182,7 @@ const avatars = async (req, res, next) => {
     return res.status(200).json({ avatarURL });
   } catch (error) {
     await fs.unlink(temporaryName);
-    return res.status(401).json({ message: "Not authorized" });
+    return res.status(401).json({ message: "Error  - not authorized" });
   }
 };
 

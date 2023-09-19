@@ -26,8 +26,8 @@ const updateStatusContact = (id, fields) => {
 };
 const findUserByEmail = async (email) => await User.findOne({ email });
 
-const createUser = async ({ email, password, avatarURL }) => {
-  const newUser = new User({ email, password, avatarURL });
+const createUser = async ({ email, password, avatarUrl }) => {
+  const newUser = new User({ email, password, avatarUrl });
   newUser.setPassword(password);
   await newUser.save();
   return newUser;
