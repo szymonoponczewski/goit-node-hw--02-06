@@ -13,8 +13,8 @@ router.get("/current", ctrlUser.auth, ctrlUser.current);
 router.patch(
   "/avatars",
   ctrlUser.auth,
-  ctrlUser.avatars,
-  ctrlUser.upload.single("avatar")
+  ctrlUser.upload.single("avatar"),
+  ctrlUser.avatars
 );
 
 module.exports = router;
