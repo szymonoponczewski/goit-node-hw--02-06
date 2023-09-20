@@ -38,7 +38,7 @@ const auth = async (req, res, next) => {
   }
 };
 
-const signup = async (req, res) => {
+const signup = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const { error } = signupSchema.validate({ email, password });
@@ -115,7 +115,7 @@ const login = async (req, res, next) => {
   }
 };
 
-const logout = async (req, res) => {
+const logout = async (req, res, next) => {
   try {
     const userId = req.user._id;
     if (!userId) {
@@ -161,13 +161,15 @@ const upload = multer({ storage: storage });
 const avatars = async (req, res, next) => {
   const { path: temporaryName, originalname } = req.file;
   const fileName = path.join(uploadDir, originalname);
+
   const { user } = req;
-  const { email, token } = user;
+  const { email } = user;
+
+  const token = req.headers.authorization;
   const nickname = email.split("@")[0];
   const nicknameAvatarPath = `${storeImage}/${nickname}.jpg`;
 
   try {
-    console.log("Token:", token); //! returns null
     if (!token)
       return res.status(401).json({ message: "Token - Not authorized" });
 
