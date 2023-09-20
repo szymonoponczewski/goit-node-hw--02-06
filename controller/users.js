@@ -162,7 +162,9 @@ const avatars = async (req, res, next) => {
   const { path: temporaryName, originalname } = req.file;
   const fileName = path.join(uploadDir, originalname);
   const { user } = req;
-  const { email, token } = user;
+  // const { email, token } = user;
+  const { email} = user;
+  const token = req.headers.authorization;
   const nickname = email.split("@")[0];
   const nicknameAvatarPath = `${storeImage}/${nickname}.jpg`;
 
