@@ -22,7 +22,7 @@ const generateVerificationToken = () => {
 };
 
 const sendVerificationEmail = async (email, verificationToken) => {
-  const tokenURL = `http://your-website.com/users/verify/${verificationToken}`;
+  const tokenURL = `http://localhost:3000/api/users/verify/${verificationToken}`;
 
   const msg = {
     to: email,
