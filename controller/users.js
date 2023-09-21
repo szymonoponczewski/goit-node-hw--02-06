@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const gravatar = require("gravatar");
 const { nanoid } = require("nanoid");
+const sgMail = require("@sendgrid/mail");
 const multer = require("multer");
 const fs = require("fs").promises;
 const path = require("path");
@@ -13,6 +14,30 @@ const uploadDir = path.join(process.cwd(), "tmp");
 const createPublic = path.join(process.cwd(), "public");
 const storeImage = path.join(createPublic, "avatars");
 const Jimp = require("jimp");
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+const generateVerificationToken = () => {
+  return nanoid(16);
+};
+
+const sendVerificationEmail = async (email, verificationToken) => {
+  const tokenURL = `http://your-website.com/users/verify/${verificationToken}`;
+
+  const msg = {
+    to: email,
+    from: "szymon_o@mac.com",
+    subject: "Email Verification",
+    text: `Click the following link to verify your email: ${tokenURL} `,
+  };
+
+  try {
+    await sgMail.send(msg);
+    console.log("Verification email sent successfully.");
+  } catch (error) {
+    console.error("Error sending verification email:", error);
+  }
+};
 
 const signupSchema = Joi.object({
   email: Joi.string().email().required(),
@@ -56,13 +81,17 @@ const signup = async (req, res, next) => {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
     const avatarUrlPath = gravatar.url(email);
+    const verificationToken = generateVerificationToken();
 
     const newUser = await createUser({
       email,
       password: hashedPassword,
       subscription: "starter",
       avatarUrl: avatarUrlPath,
+      verificationToken,
     });
+
+    sendVerificationEmail(email, verificationToken);
 
     return res.status(201).json({
       user: {
@@ -188,7 +217,7 @@ const avatars = async (req, res, next) => {
   }
 };
 
-const emailToken = async (req, res, next) => {
+const verifyUser = async (req, res, next) => {
   const { verificationToken } = req.params;
 
   try {
@@ -199,9 +228,11 @@ const emailToken = async (req, res, next) => {
     user.verificationToken = null;
     user.verify = true;
     await user.save();
+
     return res.status(200).json({ message: "Verification successful" });
   } catch (error) {
     console.error("Verification error:", error);
+
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -217,5 +248,5 @@ module.exports = {
   uploadDir,
   storeImage,
   createPublic,
-  emailToken,
+  verifyUser,
 };
