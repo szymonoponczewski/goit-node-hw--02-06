@@ -49,6 +49,10 @@ const loginSchema = Joi.object({
   password: Joi.string().required(),
 });
 
+const recheckUserSchema = Joi.object({
+  email: Joi.string().email().required(),
+});
+
 const auth = async (req, res, next) => {
   try {
     passport.authenticate("jwt", { session: false }, (err, user) => {
@@ -237,6 +241,32 @@ const verifyUser = async (req, res, next) => {
   }
 };
 
+const recheckUser = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    const { error } = recheckUserSchema.validate({ email });
+    if (error) {
+      return res.status(400).json({ message: "Missing required field email" });
+    }
+
+    const user = await findUserByEmail(email);
+    const { verify, verificationToken } = user;
+
+    if (verify) {
+      return res
+        .status(400)
+        .json({ message: "Verification has already been passed" });
+    }
+
+    sendVerificationEmail(email, verificationToken);
+
+    return res.status(200).json({ message: "Verification email sent" });
+  } catch (error) {
+    return res.status(500).send();
+  }
+};
+
 module.exports = {
   signup,
   login,
@@ -249,4 +279,5 @@ module.exports = {
   storeImage,
   createPublic,
   verifyUser,
+  recheckUser,
 };
