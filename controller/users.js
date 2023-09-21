@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const gravatar = require("gravatar");
+const { nanoid } = require("nanoid");
 const multer = require("multer");
 const fs = require("fs").promises;
 const path = require("path");
@@ -187,6 +188,24 @@ const avatars = async (req, res, next) => {
   }
 };
 
+const emailToken = async (req, res, next) => {
+  const { verificationToken } = req.params;
+
+  try {
+    const user = await User.findOne({ verificationToken });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    user.verificationToken = null;
+    user.verify = true;
+    await user.save();
+    return res.status(200).json({ message: "Verification successful" });
+  } catch (error) {
+    console.error("Verification error:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 module.exports = {
   signup,
   login,
@@ -198,4 +217,5 @@ module.exports = {
   uploadDir,
   storeImage,
   createPublic,
+  emailToken,
 };

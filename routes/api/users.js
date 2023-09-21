@@ -17,4 +17,6 @@ router.patch(
   ctrlUser.avatars
 );
 
+router.get("/verify/:verificationToken");
+
 module.exports = router;
