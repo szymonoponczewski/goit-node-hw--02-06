@@ -17,7 +17,7 @@ router.patch(
   ctrlUser.avatars
 );
 
-router.get("/verify/:verificationToken", ctrlUser.verifyUser);
+router.get("/verify/:verificationToken", ctrlUser.verify);
 
 router.post("/verify", ctrlUser.recheckUser);
 
