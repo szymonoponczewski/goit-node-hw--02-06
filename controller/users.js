@@ -42,7 +42,7 @@ const sendVerificationEmail = async (email, verificationToken) => {
 
   const msg = {
     to: email,
-    from: "szymon.oponczewski@gmail.com",
+    from: "szymon_o@mac.com",
     subject: "Please verify your email address",
     text: `Click the following link to verify your email: ${tokenUrl}`,
   };
@@ -117,6 +117,10 @@ const login = async (req, res, next) => {
 
     if (!existingUser.validPassword(password)) {
       return res.status(401).json({ message: "Email or password is wrong" });
+    }
+
+    if (!existingUser.verify) {
+      return res.status(401).json({ message: "Email is not verified" });
     }
 
     if (!existingUser.verify) {
