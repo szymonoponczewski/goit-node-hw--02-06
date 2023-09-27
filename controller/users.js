@@ -42,7 +42,7 @@ const sendVerificationEmail = async (email, verificationToken) => {
 
   const msg = {
     to: email,
-    from: "szymon_o@mac.com",
+    from: "szymon.oponczewski@gmail.com",
     subject: "Please verify your email address",
     text: `Click the following link to verify your email: ${tokenUrl}`,
   };
