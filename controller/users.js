@@ -254,7 +254,7 @@ const verify = async (req, res, next) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    await verifyUser({ verificationToken });
+    await verifyUser({ verificationToken: verificationToken });
 
     return res.status(200).json({ message: "Verification successful" });
   } catch (error) {
